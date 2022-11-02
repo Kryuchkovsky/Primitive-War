@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Logic.Units.Ragdoll
@@ -12,17 +13,18 @@ namespace Logic.Units.Ragdoll
         [SerializeField] private GameObject _physicalBody;
 
         [ContextMenu("Create physical body")]
-        public void CreatePhysicalBody(GameObject body)
+        public void CreatePhysicalBody()
         {
-            if (_physicalBody)
-            {
-                DestroyImmediate(_physicalBody.gameObject);
-            }
-            
             if (CanCreatePhysicalBody())
             {
-                _physicalBody = Instantiate(_animatedBody, transform);
-                _partsOfPhysicalBody = _physicalBody.GetComponentsInChildren<GameObject>();
+                _physicalBody = Instantiate(_animatedBody, _animatedBody.transform.position, _animatedBody.transform.rotation, transform);
+                _physicalBody.name = "PhysicalBody";
+                _partsOfPhysicalBody = _physicalBody.GetComponentsInChildren<Transform>().Select(x => x.gameObject).ToArray();
+
+                if (_physicalBody.TryGetComponent(out Animator animator))
+                {
+                    DestroyImmediate(animator);
+                }
 
                 for (int i = 0; i < _partsOfAnimatedBody.Length && i < _partsOfPhysicalBody.Length; i++)
                 {
@@ -39,9 +41,14 @@ namespace Logic.Units.Ragdoll
 
         private bool CanCreatePhysicalBody()
         {
-            if (!_animatedBody || _physicalBody) return false;
+            if (!_animatedBody) return false;
 
-            _partsOfAnimatedBody = _animatedBody.GetComponentsInChildren<GameObject>();
+            if (_physicalBody)
+            {
+                DestroyImmediate(_physicalBody.gameObject);
+            }
+
+            _partsOfAnimatedBody = _animatedBody.GetComponentsInChildren<Transform>().Select(x => x.gameObject).ToArray();
 
             foreach (var part in _partsOfAnimatedBody)
             {
