@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace Logic.Units.Ragdoll
 {
-    [RequireComponent(typeof(Rigidbody), typeof(ConfigurableJoint))]
+    [RequireComponent(typeof(ConfigurableJoint))]
     public class PhysicalBodyPart : MonoBehaviour
     {
         [SerializeField] private Transform _targetBodyPart;
@@ -34,6 +35,9 @@ namespace Logic.Units.Ragdoll
         public void FindComponents()
         {
             _joint = GetComponent<ConfigurableJoint>();
+            _joint.xMotion = ConfigurableJointMotion.Locked;
+            _joint.yMotion = ConfigurableJointMotion.Locked;
+            _joint.zMotion = ConfigurableJointMotion.Locked;
         }
     }
 }

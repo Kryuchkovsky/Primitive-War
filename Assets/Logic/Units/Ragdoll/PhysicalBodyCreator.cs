@@ -17,8 +17,7 @@ namespace Logic.Units.Ragdoll
         {
             if (CanCreatePhysicalBody())
             {
-                _physicalBody = Instantiate(_animatedBody, _animatedBody.transform.position, _animatedBody.transform.rotation, transform);
-                _physicalBody.name = "PhysicalBody";
+                _partsOfAnimatedBody = _animatedBody.GetComponentsInChildren<Transform>().Select(x => x.gameObject).ToArray();
                 _partsOfPhysicalBody = _physicalBody.GetComponentsInChildren<Transform>().Select(x => x.gameObject).ToArray();
 
                 if (_physicalBody.TryGetComponent(out Animator animator))
@@ -28,9 +27,24 @@ namespace Logic.Units.Ragdoll
 
                 for (int i = 0; i < _partsOfAnimatedBody.Length && i < _partsOfPhysicalBody.Length; i++)
                 {
-                    var physicalBodyPart = _partsOfPhysicalBody[i].AddComponent<PhysicalBodyPart>();
-                    physicalBodyPart.FindComponents();
-                    physicalBodyPart.TargetBodyPart = _partsOfAnimatedBody[i].transform;
+                    var components = _partsOfPhysicalBody[i].GetComponents<PhysicalBodyPart>();
+                        
+                    for (int j = 0; j < components.Length; j++)
+                    {
+                        DestroyImmediate(components[j]);
+                    }
+                    
+                    if (_partsOfPhysicalBody[i].TryGetComponent(out CharacterJoint joint))
+                    {
+                        DestroyImmediate(joint);
+                    }
+
+                    if (_partsOfPhysicalBody[i].TryGetComponent(out Rigidbody _))
+                    {
+                        var physicalBodyPart = _partsOfPhysicalBody[i].AddComponent<PhysicalBodyPart>();
+                        physicalBodyPart.FindComponents();
+                        physicalBodyPart.TargetBodyPart = _partsOfAnimatedBody[i].transform;
+                    }
                 }
             }
             else
@@ -41,21 +55,9 @@ namespace Logic.Units.Ragdoll
 
         private bool CanCreatePhysicalBody()
         {
-            if (!_animatedBody) return false;
+            if (!_animatedBody || !_physicalBody) return false;
 
-            if (_physicalBody)
-            {
-                DestroyImmediate(_physicalBody.gameObject);
-            }
-
-            _partsOfAnimatedBody = _animatedBody.GetComponentsInChildren<Transform>().Select(x => x.gameObject).ToArray();
-
-            foreach (var part in _partsOfAnimatedBody)
-            {
-                if (gameObject == part) return false;
-            }
-            
-            return _animatedBody.transform.parent == transform;
+            return _animatedBody.transform.parent == transform && _physicalBody.transform.parent == transform;
         }
     }
 }
