@@ -6,8 +6,14 @@ namespace Logic.Units
     [CreateAssetMenu(menuName = "Create UnitList", fileName = "UnitList", order = 0)]
     public class UnitList : ScriptableObject
     {
-        [SerializeField] private SerializedDictionary<UnitType, Unit> _units;
+        [SerializeField] private SerializedDictionary<UnitType, UnitData> _units;
 
-        public Unit GetUnitByType(UnitType type) => _units[type];
+        public UnitData GetUnitByType(UnitType type) => _units[type];
+    }
+
+    public class UnitData
+    {
+        public Unit Prefab;
+        public int SpawnInterval;
     }
 }

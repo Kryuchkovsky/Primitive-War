@@ -7,7 +7,6 @@ namespace Logic.Units
     public abstract class Unit : MonoBehaviour
     {
         [SerializeField] protected List<UnitRenderer> _unitRenderers;
-        [SerializeField] protected UnitType _type;
 
         public void SetColor(Color color)
         {
