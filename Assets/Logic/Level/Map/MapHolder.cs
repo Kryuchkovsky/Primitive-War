@@ -15,6 +15,6 @@ namespace Logic.Level.Map
     public struct SpawnPlace
     {
         public List<Transform> SpawnPoints;
-        [Range(0, 3)] public int CommandIndex;
+        [Range(0, 3)] public int Number;
     }
 }

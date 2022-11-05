@@ -28,13 +28,12 @@ namespace Logic.Units.Spawn
             for (int i = 0; i < NumberOfCommands; i++)
             {
                 var entity = _world.Value.NewEntity();
-                
-                _spawnInformationComponents.Add(entity);
-                ref var spawnInformationComponent = ref _spawnInformationComponents.Get(entity);
+
+                ref var spawnInformationComponent = ref _spawnInformationComponents.Add(entity);
                 spawnInformationComponent.TeamId = i;
                 
-                _requestQueueComponents.Add(entity);
-                ref var requestQueueComponent = ref _requestQueueComponents.Get(entity);
+                ref var requestQueueComponent = ref _requestQueueComponents.Add(entity);
+                requestQueueComponent.UnitPrefabs = new Queue<Unit>();
                 requestQueueComponent.TeamId = i;
             }
         }
@@ -44,29 +43,38 @@ namespace Logic.Units.Spawn
             foreach (var entity in _filter)
             {
                 ref var spawnInformationComponent = ref _spawnInformationComponents.Get(entity);
-                spawnInformationComponent.TimeBeforeSpawn -= Time.deltaTime;
 
-                if (spawnInformationComponent.TimeBeforeSpawn <= 0)
+                if (spawnInformationComponent.UnitIsSpawning)
                 {
-                    ref var requestQueueComponent = ref _requestQueueComponents.Get(entity);
-                    var unitType = (UnitType) Random.Range(0, Enum.GetNames(typeof(UnitType)).Length);
-                    var unitData = _unitList.Value.GetUnitByType(unitType);
-                    requestQueueComponent.UnitPrefabs.Enqueue(unitData.Prefab);
-                    spawnInformationComponent.TimeBeforeSpawn = unitData.SpawnInterval;
+                    spawnInformationComponent.TimeBeforeSpawn -= Time.deltaTime;
+                    
+                    if (spawnInformationComponent.TimeBeforeSpawn <= 0)
+                    {
+                        RequestUnitSpawn(entity, ref spawnInformationComponent);
+                    }
+                }
+                else
+                {
+                    StartUnitSpawn(ref spawnInformationComponent);
                 }
             }
         }
-    }
 
-    public struct SpawnRequestQueueComponent
-    {
-        public Queue<Unit> UnitPrefabs;
-        public int TeamId;
-    }
-    
-    public struct SpawnInformationComponent
-    {
-        public int TeamId;
-        [Min(0)] public float TimeBeforeSpawn;
+        private void RequestUnitSpawn(int entity, ref SpawnInformationComponent spawnInformationComponent)
+        {
+            ref var requestQueueComponent = ref _requestQueueComponents.Get(entity);
+            requestQueueComponent.UnitPrefabs.Enqueue(spawnInformationComponent.SpawningUnitData.Prefab);
+            requestQueueComponent.TeamId = spawnInformationComponent.TeamId;
+            spawnInformationComponent.UnitIsSpawning = false;
+        }
+
+        private void StartUnitSpawn(ref SpawnInformationComponent spawnInformationComponent)
+        {
+            var unitType = (UnitType)Random.Range(0, Enum.GetNames(typeof(UnitType)).Length);
+            var unitData = _unitList.Value.GetUnitByType(unitType);
+            spawnInformationComponent.SpawningUnitData = unitData;
+            spawnInformationComponent.TimeBeforeSpawn = unitData.SpawningTime;
+            spawnInformationComponent.UnitIsSpawning = true;
+        }
     }
 }

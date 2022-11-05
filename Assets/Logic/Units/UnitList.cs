@@ -10,10 +10,4 @@ namespace Logic.Units
 
         public UnitData GetUnitByType(UnitType type) => _units[type];
     }
-
-    public class UnitData
-    {
-        public Unit Prefab;
-        public int SpawnInterval;
-    }
 }
