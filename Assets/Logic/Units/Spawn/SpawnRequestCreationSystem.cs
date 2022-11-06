@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
+using Logic.Teams;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,13 +10,13 @@ namespace Logic.Units.Spawn
 {
     public sealed class SpawnRequestCreationSystem : IEcsInitSystem, IEcsRunSystem
     {
-        private const int NumberOfCommands = 2;
-        
         private readonly EcsWorldInject _world = default;
         private readonly EcsCustomInject<UnitList> _unitList;
+        private readonly EcsCustomInject<TeamsConfiguration> _teamsConfiguration;
 
         private EcsPool<SpawnInformationComponent> _spawnInformationComponents;
         private EcsPool<SpawnRequestQueueComponent> _requestQueueComponents;
+        private EcsPool<TeamComponent> _teamComponents;
 
         private EcsFilter _filter;
 
@@ -24,17 +25,19 @@ namespace Logic.Units.Spawn
             _filter = _world.Value.Filter<SpawnInformationComponent>().Inc<SpawnRequestQueueComponent>().End();
             _spawnInformationComponents = _world.Value.GetPool<SpawnInformationComponent>();
             _requestQueueComponents = _world.Value.GetPool<SpawnRequestQueueComponent>();
+            _teamComponents = _world.Value.GetPool<TeamComponent>();
 
-            for (int i = 0; i < NumberOfCommands; i++)
+            for (int i = 0; i < _teamsConfiguration.Value.TotalTeams; i++)
             {
                 var entity = _world.Value.NewEntity();
 
-                ref var spawnInformationComponent = ref _spawnInformationComponents.Add(entity);
-                spawnInformationComponent.TeamId = i;
-                
+               _spawnInformationComponents.Add(entity);
+
                 ref var requestQueueComponent = ref _requestQueueComponents.Add(entity);
                 requestQueueComponent.UnitPrefabs = new Queue<Unit>();
-                requestQueueComponent.TeamId = i;
+
+                ref var teamComponent = ref _teamComponents.Add(entity);
+                teamComponent = _teamsConfiguration.Value.GetDataByIndex(i);
             }
         }
 
@@ -64,7 +67,6 @@ namespace Logic.Units.Spawn
         {
             ref var requestQueueComponent = ref _requestQueueComponents.Get(entity);
             requestQueueComponent.UnitPrefabs.Enqueue(spawnInformationComponent.SpawningUnitData.Prefab);
-            requestQueueComponent.TeamId = spawnInformationComponent.TeamId;
             spawnInformationComponent.UnitIsSpawning = false;
         }
 

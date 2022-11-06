@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Logic.Teams;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,7 +12,10 @@ namespace Logic.Units
         [SerializeField] protected NavMeshAgent _navNavMeshAgent;
 
         public NavMeshAgent NavMeshAgent => _navNavMeshAgent;
+        public TeamComponent TeamComponent { get; set; }
 
+        public abstract void LookInDirection(Vector3 direction);
+        
         public void SetColor(Color color)
         {
             foreach (var renderer in _unitRenderers)

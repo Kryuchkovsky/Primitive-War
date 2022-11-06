@@ -2,6 +2,7 @@ using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using Logic.Level.Initialization;
 using Logic.Level.Map;
+using Logic.Teams;
 using Logic.Units;
 using Logic.Units.Behaviour;
 using Logic.Units.Spawn;
@@ -13,6 +14,7 @@ namespace Logic
     {
         [SerializeField] private MapHolder _map;
         [SerializeField] private UnitList _unitList;
+        [SerializeField] private TeamsConfiguration _teamsConfiguration;
 
         private EcsWorld _world;
         private IEcsSystems _systems;
@@ -26,6 +28,7 @@ namespace Logic
                 .Add(new SpawnRequestCreationSystem())
                 .Add(new UnitSpawnSystem())
                 .Add(new UnitMovementControlSystem())
+                .Add(new UnitShootingControlSystem())
                 // register your systems here, for example:
                 // .Add (new TestSystem1 ())
                 // .Add (new TestSystem2 ())
@@ -39,6 +42,7 @@ namespace Logic
 #endif
                 .Inject(_map)
                 .Inject(_unitList)
+                .Inject(_teamsConfiguration)
                 .Init();
         }
 

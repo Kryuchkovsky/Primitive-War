@@ -32,7 +32,12 @@ namespace Logic.Units.Behaviour
                 ref var shootingComponent = ref _shootingComponents.Get(entity);
                 ref var teamComponent = ref _teamComponents.Get(entity);
 
-                if (!shootingComponent.Target)
+                if (shootingComponent.Target)
+                {
+                    var direction = (shootingComponent.Target.transform.position - unitComponent.Unit.transform.position).normalized;
+                    unitComponent.Unit.LookInDirection(direction);
+                }
+                else
                 {
                     var matches = Physics.OverlapSphereNonAlloc(unitComponent.Unit.transform.position, 10, _colliders, teamComponent.LayerMask);
 
@@ -41,7 +46,7 @@ namespace Logic.Units.Behaviour
                         if (_colliders[0].TryGetComponent(out Unit unit))
                         {
                             shootingComponent.Target = unit;
-                            Debug.Log("Target was found!"s);
+                            Debug.Log("Target was found!");
                         }
                     }
                 }

@@ -4,10 +4,11 @@ using UnityEngine;
 namespace Logic.Teams
 {
     [Serializable]
-    public struct TeamData
+    public struct TeamComponent
     {
         public Color Color;
         public LayerMask LayerMask;
-        public int TeamIndex;
+        public int LayerIndex;
+        public int TeamId;
     }
 }

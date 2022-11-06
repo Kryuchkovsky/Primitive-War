@@ -637,6 +637,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _map: {fileID: 8876565074122342989, guid: 473dc1bdb34dac94287aadcde470dd99, type: 3}
   _unitList: {fileID: 11400000, guid: 8685ed0b265f342449e950449064caa7, type: 2}
+  _teamsConfiguration: {fileID: 11400000, guid: 47b1e5d08fa415c4c924fe4af72741c8,
+    type: 2}
 --- !u!4 &1714534989
 Transform:
   m_ObjectHideFlags: 0
