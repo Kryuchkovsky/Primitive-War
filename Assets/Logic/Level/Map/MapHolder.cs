@@ -7,8 +7,10 @@ namespace Logic.Level.Map
     public class MapHolder : MonoBehaviour
     {
         [SerializeField] private List<SpawnPlace> _spawnPlaces;
+        [SerializeField] private Transform _captureZone;
         
         public List<SpawnPlace> SpawnPlaces => _spawnPlaces;
+        public Vector3 CaptureZonePosition => _captureZone.position;
     }
 
     [Serializable]

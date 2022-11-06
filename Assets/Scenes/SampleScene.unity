@@ -659,6 +659,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8876565074122342989, guid: 473dc1bdb34dac94287aadcde470dd99,
+        type: 3}
+      propertyPath: _captureZone
+      value: 
+      objectReference: {fileID: 1800172552}
     - target: {fileID: 8876565074339654632, guid: 473dc1bdb34dac94287aadcde470dd99,
         type: 3}
       propertyPath: m_Name
@@ -787,3 +792,9 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: d2bffc94e0c86cc409fb506a625b1ece, type: 2}
   m_BuildHeightMesh: 0
+--- !u!4 &1800172552 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8658058739611647737, guid: 473dc1bdb34dac94287aadcde470dd99,
+    type: 3}
+  m_PrefabInstance: {fileID: 1800172548}
+  m_PrefabAsset: {fileID: 0}
