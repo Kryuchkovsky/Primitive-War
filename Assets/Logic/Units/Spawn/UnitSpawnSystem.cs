@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Logic.Units.Spawn
 {
-    public sealed class SpawnUnitSystem : IEcsInitSystem, IEcsRunSystem
+    public sealed class UnitSpawnSystem : IEcsInitSystem, IEcsRunSystem
     {
         private readonly EcsWorldInject _world = default;
 
@@ -49,7 +49,7 @@ namespace Logic.Units.Spawn
                         ref var unitComponent = ref _unitComponents.Add(unitEntity);
                         unitComponent.Unit = unit;
                         ref var movementComponent = ref _movementComponents.Add(unitEntity);
-                        mapEntity.
+                        movementComponent.TargetPosition = mapInformationComponent.Map.CaptureZonePosition;
                     }
                 }
             }

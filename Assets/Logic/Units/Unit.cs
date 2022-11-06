@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Logic.Units
 {
     public abstract class Unit : MonoBehaviour
     {
         [SerializeField] protected List<UnitRenderer> _unitRenderers;
+        [SerializeField] protected NavMeshAgent _navNavMeshAgent;
+
+        public NavMeshAgent NavMeshAgent => _navNavMeshAgent;
 
         public void SetColor(Color color)
         {

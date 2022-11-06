@@ -3,6 +3,7 @@ using Leopotam.EcsLite.Di;
 using Logic.Level.Initialization;
 using Logic.Level.Map;
 using Logic.Units;
+using Logic.Units.Behaviour;
 using Logic.Units.Spawn;
 using UnityEngine;
 
@@ -23,7 +24,8 @@ namespace Logic
             _systems
                 .Add(new MapCreationSystem())
                 .Add(new SpawnRequestCreationSystem())
-                .Add(new SpawnUnitSystem())
+                .Add(new UnitSpawnSystem())
+                .Add(new UnitMovementControlSystem())
                 // register your systems here, for example:
                 // .Add (new TestSystem1 ())
                 // .Add (new TestSystem2 ())

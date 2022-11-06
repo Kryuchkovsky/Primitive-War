@@ -406,6 +406,7 @@ MonoBehaviour:
     Renderer: {fileID: 7563676730245446305}
   - MaterialIndexes: 01000000
     Renderer: {fileID: 4946655000436068590}
+  _navNavMeshAgent: {fileID: 3308990905601533895}
 --- !u!195 &3308990905601533895
 NavMeshAgent:
   m_ObjectHideFlags: 0
