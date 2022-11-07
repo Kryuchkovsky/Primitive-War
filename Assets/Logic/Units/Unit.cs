@@ -10,8 +10,10 @@ namespace Logic.Units
     {
         [SerializeField] protected List<UnitRenderer> _unitRenderers;
         [SerializeField] protected NavMeshAgent _navNavMeshAgent;
+        [SerializeField] protected Transform _shootPoint;
 
         public NavMeshAgent NavMeshAgent => _navNavMeshAgent;
+        public Transform ShootPoint => _shootPoint;
         public TeamComponent TeamComponent { get; set; }
 
         public abstract void LookInDirection(Vector3 direction);
