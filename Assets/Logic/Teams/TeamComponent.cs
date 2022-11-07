@@ -7,7 +7,7 @@ namespace Logic.Teams
     public struct TeamComponent
     {
         public Color Color;
-        public LayerMask LayerMask;
+        public LayerMask EnemiesLayerMask;
         public int LayerIndex;
         public int TeamId;
     }

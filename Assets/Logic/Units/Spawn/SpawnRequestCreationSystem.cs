@@ -73,7 +73,7 @@ namespace Logic.Units.Spawn
         private void StartUnitSpawn(ref SpawnInformationComponent spawnInformationComponent)
         {
             var unitType = (UnitType)Random.Range(0, Enum.GetNames(typeof(UnitType)).Length);
-            var unitData = _unitList.Value.GetUnitByType(unitType);
+            var unitData = _unitList.Value.GetUnitByType(UnitType.Solider);
             spawnInformationComponent.SpawningUnitData = unitData;
             spawnInformationComponent.TimeBeforeSpawn = unitData.SpawningTime;
             spawnInformationComponent.UnitIsSpawning = true;

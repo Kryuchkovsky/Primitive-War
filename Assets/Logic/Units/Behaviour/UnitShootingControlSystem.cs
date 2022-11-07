@@ -39,15 +39,11 @@ namespace Logic.Units.Behaviour
                 }
                 else
                 {
-                    var matches = Physics.OverlapSphereNonAlloc(unitComponent.Unit.transform.position, 10, _colliders, teamComponent.LayerMask);
+                    var matches = Physics.OverlapSphereNonAlloc(unitComponent.Unit.transform.position, 10, _colliders, teamComponent.EnemiesLayerMask);
 
-                    if (matches > 0)
+                    if (matches > 0 && _colliders[0].TryGetComponent(out Unit unit))
                     {
-                        if (_colliders[0].TryGetComponent(out Unit unit))
-                        {
-                            shootingComponent.Target = unit;
-                            Debug.Log("Target was found!");
-                        }
+                        shootingComponent.Target = unit;
                     }
                 }
             }

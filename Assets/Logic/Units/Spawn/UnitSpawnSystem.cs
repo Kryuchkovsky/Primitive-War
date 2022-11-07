@@ -53,6 +53,7 @@ namespace Logic.Units.Spawn
                         var spawnPlace = mapInformationComponent.Map.SpawnPlaces.First(place => place.Number == teamId);
                         var position = spawnPlace.SpawnPoints[Random.Range(0, spawnPlace.SpawnPoints.Count)].position;
                         var unit = Object.Instantiate(unitPrefab, position, Quaternion.identity, mapInformationComponent.Map.transform);
+                        unit.SetColor(teamComponent.Color);
                         unit.TeamComponent = teamComponent;
                         unit.gameObject.layer = teamComponent.LayerIndex;
                         
@@ -68,7 +69,6 @@ namespace Logic.Units.Spawn
                         
                         ref var unitTeamComponent = ref _teamComponents.Add(unitEntity);
                         unitTeamComponent = teamComponent;
-
                     }
                 }
             }
