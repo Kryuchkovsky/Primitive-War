@@ -14,8 +14,9 @@ namespace Logic.Units
 
         private Transform _shoulder;
         private Quaternion _leftHandRotation;
-        
+
         public Vector3 LookDirection { get; set; }
+        public override KineticWeaponType KineticWeaponType => KineticWeaponType.AK74;
 
         private void Start()
         {

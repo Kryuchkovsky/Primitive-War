@@ -7,23 +7,25 @@ namespace Logic.Units.Weapon
     public class KineticWeaponData
     {
         [SerializeField] private Bullet _bullet;
+        [SerializeField] private BulletData _bulletData;
         [SerializeField] [Min(1)] private int _shots = 1;
-        [SerializeField] [Min(0)] private float _damage = 100;
-        [SerializeField] [Min(0)] private float _bulletSpeed = 20;
-        [SerializeField] [Range(0, 1000)] private float _range = 200;
-        [SerializeField] [Range(0, 100)] private float _explosionRange;
-        [SerializeField] [Range(0, 100)] private float _explosionForce;
         [SerializeField] [Min(0)] private float _reloadTimeBetweenShots = 0.25f;
         [SerializeField] [Min(0)] private float _mainReloadTime = 3;
 
         public Bullet Bullet => _bullet;
+        public BulletData BulletData => _bulletData;
         public int Shots => _shots;
-        public float Damage => _damage;
-        public float BulletSpeed => _bulletSpeed;
-        public float Range => _range;
-        public float ExplosionRange => _explosionRange;
-        public float ExplosionForce => _explosionForce;
         public float ReloadTimeBetweenShots => _reloadTimeBetweenShots;
         public float MainReloadTime => _mainReloadTime;
+    }
+
+    [Serializable]
+    public struct BulletData
+    {
+        public float Damage;
+        public float Speed;
+        public float Distance;
+        public float ExplosionRange;
+        public float ExplosionForce;
     }
 }

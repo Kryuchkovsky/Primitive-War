@@ -12,6 +12,7 @@ namespace Logic.Units.Spawn
     public sealed class UnitSpawnSystem : IEcsInitSystem, IEcsRunSystem
     {
         private readonly EcsWorldInject _world = default;
+        private readonly EcsCustomInject<KineticWeaponConfiguration> _kineticWeaponConfiguration;
 
         private EcsPool<UnitComponent> _unitComponents;
         private EcsPool<MovementComponent> _movementComponents;
@@ -74,6 +75,11 @@ namespace Logic.Units.Spawn
                         
                         ref var unitTeamComponent = ref _teamComponents.Add(unitEntity);
                         unitTeamComponent = teamComponent;
+
+                        ref var kineticWeaponComponent = ref _kineticWeaponComponents.Add(entity);
+                        kineticWeaponComponent.Data = _kineticWeaponConfiguration.Value.GetDataByType(unit.KineticWeaponType);
+
+                        _weaponReloadComponents.Add(entity);
                     }
                 }
             }

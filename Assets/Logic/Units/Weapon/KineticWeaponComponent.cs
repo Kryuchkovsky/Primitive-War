@@ -14,4 +14,11 @@ namespace Logic.Units.Weapon
         public float ShotsBeforeReload;
         public float ReloadTime;
     }
+
+    public struct BulletComponent
+    {
+        public Bullet Bullet;
+        public BulletData Data;
+        public float TraveledDistance;
+    }
 }

@@ -16,6 +16,7 @@ namespace Logic.Units
         public NavMeshAgent NavMeshAgent => _navNavMeshAgent;
         public ManualWeaponHolder ManualWeaponHolder => _manualWeapon;
         public TeamComponent TeamComponent { get; set; }
+        public abstract KineticWeaponType KineticWeaponType { get; }
 
         public abstract void LookInDirection(Vector3 direction);
         

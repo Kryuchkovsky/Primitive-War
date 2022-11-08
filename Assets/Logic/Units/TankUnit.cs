@@ -1,3 +1,4 @@
+using Logic.Units.Weapon;
 using UnityEngine;
 
 namespace Logic.Units
@@ -6,6 +7,8 @@ namespace Logic.Units
     {
         [SerializeField] private Transform _tower;
         [SerializeField] private Transform _gun;
+
+        public override KineticWeaponType KineticWeaponType => KineticWeaponType.TankGun;
 
         public override void LookInDirection(Vector3 direction)
         {
