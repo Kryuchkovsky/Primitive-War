@@ -13,5 +13,27 @@ MonoBehaviour:
   m_Name: KineticWeaponConfiguration
   m_EditorClassIdentifier: 
   _weaponData:
-    m_Keys: 
-    m_Values: []
+    m_Keys: 0000000001000000
+    m_Values:
+    - _bullet: {fileID: 3420932246917026894, guid: b58f37acded865f49b897ff1d573f0cb,
+        type: 3}
+      _bulletData:
+        Damage: 10
+        Speed: 30
+        Distance: 50
+        ExplosionRange: 0
+        ExplosionForce: 0
+      _shots: 3
+      _reloadTimeBetweenShots: 0.25
+      _mainReloadTime: 3
+    - _bullet: {fileID: 3420932246917026894, guid: b58f37acded865f49b897ff1d573f0cb,
+        type: 3}
+      _bulletData:
+        Damage: 200
+        Speed: 50
+        Distance: 300
+        ExplosionRange: 10
+        ExplosionForce: 100
+      _shots: 1
+      _reloadTimeBetweenShots: 0.25
+      _mainReloadTime: 5

@@ -22,10 +22,10 @@ namespace Logic.Units.Weapon
     [Serializable]
     public struct BulletData
     {
-        public float Damage;
-        public float Speed;
-        public float Distance;
-        public float ExplosionRange;
-        public float ExplosionForce;
+        [Min(0)] public float Damage;
+        [Min(0)] public float Speed;
+        [Min(0)] public float Distance;
+        [Min(0)] public float ExplosionRange;
+        [Min(0)] public float ExplosionForce;
     }
 }
