@@ -4,13 +4,13 @@ using UnityEngine;
 namespace Logic.Units.Weapon
 {
     [Serializable]
-    public class WeaponData
+    public class KineticWeaponData
     {
         [SerializeField] private Bullet _bullet;
-        [SerializeField] [Min(1)] private int _shots;
+        [SerializeField] [Min(1)] private int _shots = 1;
         [SerializeField] [Min(0)] private float _damage = 100;
         [SerializeField] [Min(0)] private float _bulletSpeed = 20;
-        [SerializeField] [Range(0, 1000)] private float _range;
+        [SerializeField] [Range(0, 1000)] private float _range = 200;
         [SerializeField] [Range(0, 100)] private float _explosionRange;
         [SerializeField] [Range(0, 100)] private float _explosionForce;
         [SerializeField] [Min(0)] private float _reloadTimeBetweenShots = 0.25f;

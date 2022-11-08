@@ -4,6 +4,7 @@ using Leopotam.EcsLite.Di;
 using Logic.Level.Initialization;
 using Logic.Teams;
 using Logic.Units.Behaviour;
+using Logic.Units.Weapon;
 using UnityEngine;
 
 namespace Logic.Units.Spawn
@@ -18,7 +19,9 @@ namespace Logic.Units.Spawn
         private EcsPool<MapInformationComponent> _mapInformationComponents;
         private EcsPool<SpawnRequestQueueComponent> _requestQueueComponents;
         private EcsPool<TeamComponent> _teamComponents;
-        
+        private EcsPool<KineticWeaponComponent> _kineticWeaponComponents;
+        private EcsPool<WeaponReloadComponent> _weaponReloadComponents;
+
         private EcsFilter _mapInformationComponentFilter;
         private EcsFilter _requestQueueComponentFilter;
         
@@ -30,6 +33,8 @@ namespace Logic.Units.Spawn
             _mapInformationComponents = _world.Value.GetPool<MapInformationComponent>();
             _requestQueueComponents = _world.Value.GetPool<SpawnRequestQueueComponent>();
             _teamComponents = _world.Value.GetPool<TeamComponent>();
+            _kineticWeaponComponents = _world.Value.GetPool<KineticWeaponComponent>();
+            _weaponReloadComponents = _world.Value.GetPool<WeaponReloadComponent>();
             
             _mapInformationComponentFilter = _world.Value.Filter<MapInformationComponent>().End();
             _requestQueueComponentFilter = _world.Value.Filter<SpawnRequestQueueComponent>().Inc<TeamComponent>().End();

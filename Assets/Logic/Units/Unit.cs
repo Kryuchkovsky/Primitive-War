@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Logic.Teams;
+using Logic.Units.Weapon;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,10 +11,10 @@ namespace Logic.Units
     {
         [SerializeField] protected List<UnitRenderer> _unitRenderers;
         [SerializeField] protected NavMeshAgent _navNavMeshAgent;
-        [SerializeField] protected Transform _shootPoint;
+        [SerializeField] protected ManualWeaponHolder _manualWeapon;
 
         public NavMeshAgent NavMeshAgent => _navNavMeshAgent;
-        public Transform ShootPoint => _shootPoint;
+        public ManualWeaponHolder ManualWeaponHolder => _manualWeapon;
         public TeamComponent TeamComponent { get; set; }
 
         public abstract void LookInDirection(Vector3 direction);

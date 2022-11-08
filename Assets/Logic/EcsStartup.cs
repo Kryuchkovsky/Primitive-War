@@ -6,6 +6,7 @@ using Logic.Teams;
 using Logic.Units;
 using Logic.Units.Behaviour;
 using Logic.Units.Spawn;
+using Logic.Units.Weapon;
 using UnityEngine;
 
 namespace Logic
@@ -15,6 +16,7 @@ namespace Logic
         [SerializeField] private MapHolder _map;
         [SerializeField] private UnitList _unitList;
         [SerializeField] private TeamsConfiguration _teamsConfiguration;
+        [SerializeField] private KineticWeaponConfiguration _kineticWeaponConfiguration;
 
         private EcsWorld _world;
         private IEcsSystems _systems;
@@ -29,6 +31,7 @@ namespace Logic
                 .Add(new UnitSpawnSystem())
                 .Add(new UnitMovementControlSystem())
                 .Add(new UnitShootingControlSystem())
+                .Add(new WeaponControlSystem())
                 // register your systems here, for example:
                 // .Add (new TestSystem1 ())
                 // .Add (new TestSystem2 ())
@@ -43,6 +46,7 @@ namespace Logic
                 .Inject(_map)
                 .Inject(_unitList)
                 .Inject(_teamsConfiguration)
+                .Inject(_kineticWeaponConfiguration)
                 .Init();
         }
 
