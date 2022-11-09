@@ -36,7 +36,17 @@ namespace Logic.Units.Behaviour
                 
                 if (healthComponent.HealthPoints <= 0)
                 {
-                    Object.Destroy(unitComponent.Unit.gameObject);
+                    if (unitComponent.Unit is SoldierUnit)
+                    {
+                        var solider = unitComponent.Unit as SoldierUnit;
+                        solider.RagdollController.SetRagdollStatus(true);
+                        solider.NavMeshAgent.enabled = false;
+                    }
+                    else
+                    {
+                        Object.Destroy(unitComponent.Unit.gameObject);
+                    }
+
                     _world.Value.DelEntity(damagedEntity);
                 }
                 
