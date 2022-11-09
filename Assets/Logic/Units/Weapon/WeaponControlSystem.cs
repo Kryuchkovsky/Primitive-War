@@ -17,23 +17,26 @@ namespace Logic.Units.Weapon
         private EcsPool<BulletComponent> _bulletComponents;
 
         private EcsFilter _mapComponentsFilter;
-        private EcsFilter _filter;
+        private EcsFilter _weaponComponentsfilter;
         private MapHolder _map;
 
         public void Init(IEcsSystems systems)
         {
+            _mapInformationComponents = _world.Value.GetPool<MapInformationComponent>();
             _kineticWeaponComponents = _world.Value.GetPool<KineticWeaponComponent>();
             _weaponReloadComponents = _world.Value.GetPool<WeaponReloadComponent>();
             _bulletComponents = _world.Value.GetPool<BulletComponent>();
-            _filter = _world.Value.Filter<KineticWeaponComponent>().Inc<WeaponReloadComponent>().End();
             
+            _mapComponentsFilter = _world.Value.Filter<MapInformationComponent>().End();
+            _weaponComponentsfilter = _world.Value.Filter<KineticWeaponComponent>().Inc<WeaponReloadComponent>().End();
+
             var mapEntity = _mapComponentsFilter.GetRawEntities().First();
             _map = _mapInformationComponents.Get(mapEntity).Map;
         }
 
         public void Run(IEcsSystems systems)
         {
-            foreach (var entity in _filter)
+            foreach (var entity in _weaponComponentsfilter)
             {
                 ref var kineticWeaponComponent = ref _kineticWeaponComponents.Get(entity);
                 ref var weaponReloadComponent = ref _weaponReloadComponents.Get(entity);

@@ -12,7 +12,6 @@ namespace Logic.Level.Initialization
 
         private EcsPool<MapInformationComponent> _mapInformationComponents;
 
-        
         public void Init(IEcsSystems systems)
         {
             _mapInformationComponents = _world.Value.GetPool<MapInformationComponent>();
