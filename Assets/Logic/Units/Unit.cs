@@ -9,6 +9,8 @@ namespace Logic.Units
 {
     public abstract class Unit : MonoBehaviour
     {
+        public event Action<float> OnTakeDamage; 
+
         [SerializeField] protected List<UnitRenderer> _unitRenderers;
         [SerializeField] protected NavMeshAgent _navNavMeshAgent;
         [SerializeField] protected ManualWeaponHolder _manualWeapon;
@@ -35,6 +37,8 @@ namespace Logic.Units
                 }
             }
         }
+
+        public void TakeDamage(float damage) => OnTakeDamage?.Invoke(damage);
     }
     
     [Serializable]

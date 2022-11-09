@@ -16,11 +16,6 @@ namespace Logic.Units
         
         public override KineticWeaponType KineticWeaponType => KineticWeaponType.AK74;
 
-        private void Start()
-        {
-            _shoulder = _animator.GetBoneTransform(HumanBodyBones.RightShoulder);
-        }
-
         private void OnAnimatorIK()
         {
             _animator.SetLookAtWeight(1, 0, 1);
@@ -39,6 +34,7 @@ namespace Logic.Units
 
         public override void LookInDirection(Vector3 direction)
         {
+            _shoulder ??= _animator.GetBoneTransform(HumanBodyBones.RightShoulder);
             _lookDirection = direction;
             _leftHandRotation = _leftPoint.rotation;
             _leftPoint.position = _manualWeapon.PointForLeftHand.position;

@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 
-namespace Logic.Units.Weapon
+namespace Logic.Units.Weapon.Bullets
 {
     public class Bullet : MonoBehaviour
     {
+        public event Action<Collision> OnCollide; 
+
         [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private MeshRenderer _meshRenderer;
         [SerializeField] private TrailRenderer _trailRenderer;
@@ -14,6 +17,11 @@ namespace Logic.Units.Weapon
         {
             _meshRenderer.material.color = color;
             _trailRenderer.startColor = color;
+        }
+
+        public void OnCollisionEnter(Collision collision)
+        {
+            OnCollide?.Invoke(collision);
         }
     }
 }

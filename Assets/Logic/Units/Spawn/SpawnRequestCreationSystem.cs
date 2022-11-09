@@ -34,7 +34,7 @@ namespace Logic.Units.Spawn
                _spawnInformationComponents.Add(entity);
 
                 ref var requestQueueComponent = ref _requestQueueComponents.Add(entity);
-                requestQueueComponent.UnitPrefabs = new Queue<Unit>();
+                requestQueueComponent.Requests = new Queue<UnitData>();
 
                 ref var teamComponent = ref _teamComponents.Add(entity);
                 teamComponent = _teamsConfiguration.Value.GetDataByIndex(i);
@@ -66,7 +66,7 @@ namespace Logic.Units.Spawn
         private void RequestUnitSpawn(int entity, ref SpawnInformationComponent spawnInformationComponent)
         {
             ref var requestQueueComponent = ref _requestQueueComponents.Get(entity);
-            requestQueueComponent.UnitPrefabs.Enqueue(spawnInformationComponent.SpawningUnitData.Prefab);
+            requestQueueComponent.Requests.Enqueue(spawnInformationComponent.SpawningUnitData);
             spawnInformationComponent.UnitIsSpawning = false;
         }
 

@@ -1,5 +1,8 @@
+using System.Linq;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
+using Logic.Level.Initialization;
+using Logic.Level.Map;
 using UnityEngine;
 
 namespace Logic.Units.Weapon.Bullets
@@ -8,33 +11,57 @@ namespace Logic.Units.Weapon.Bullets
     {
         private readonly EcsWorldInject _world;
         
-        private EcsPool<BulletSpawnRequestComponent> _bulletSpawnRequestComponentComponents;
+        private EcsPool<MapInformationComponent> _mapInformationComponents;
+        private EcsPool<BulletSpawnRequestComponent> _bulletSpawnRequestComponents;
         private EcsPool<BulletComponent> _bulletComponents;
+        private EcsPool<BulletCollisionComponent> _bulletCollisionComponents;
 
-        private EcsFilter _filter;
+        private EcsFilter _mapComponentsFilter;
+        private EcsFilter _bulletSpawnRequestComponentsFilter;
+        private MapHolder _map;
 
         public void Init(IEcsSystems systems)
         {
+            _mapInformationComponents = _world.Value.GetPool<MapInformationComponent>();
+            _bulletSpawnRequestComponents = _world.Value.GetPool<BulletSpawnRequestComponent>();
             _bulletComponents = _world.Value.GetPool<BulletComponent>();
-            _filter = _world.Value.Filter<BulletComponent>().End();
+            _bulletCollisionComponents = _world.Value.GetPool<BulletCollisionComponent>();
+            
+            _mapComponentsFilter = _world.Value.Filter<MapInformationComponent>().End();
+            _bulletSpawnRequestComponentsFilter = _world.Value.Filter<BulletSpawnRequestComponent>().End();
+            
+            var mapEntity = _mapComponentsFilter.GetRawEntities().First();
+            _map = _mapInformationComponents.Get(mapEntity).Map;
         }
 
         public void Run(IEcsSystems systems)
         {
-            foreach (var entity in _filter)
+            foreach (var entity in _bulletSpawnRequestComponentsFilter)
             {
-                ref var bulletComponent = ref _bulletComponents.Get(entity);
+                ref var bulletSpawnRequestComponent = ref _bulletSpawnRequestComponents.Get(entity);
 
-                if (bulletComponent.TraveledDistance >= bulletComponent.Data.Distance)
+                var data = bulletSpawnRequestComponent.Data;
+                var rotation = Quaternion.LookRotation(bulletSpawnRequestComponent.ShotPoint.forward);
+                var bullet = Object.Instantiate(
+                    bulletSpawnRequestComponent.Prefab,
+                    bulletSpawnRequestComponent.ShotPoint.position,
+                    rotation,
+                    _map.BulletsContainer);
+
+                bullet.Rigidbody.velocity = bullet.transform.forward * data.Speed;
+
+                var bulletEntity = _world.Value.NewEntity();
+                ref var bulletComponent = ref _bulletComponents.Add(bulletEntity);
+                bulletComponent.Bullet = bullet;
+                bulletComponent.Data = data;
+
+                bullet.OnCollide += collision =>
                 {
-                    Object.Destroy(bulletComponent.Bullet.gameObject);
-                    _world.Value.DelEntity(entity);
-                }
-                else
-                {
-                    var delta = bulletComponent.Bullet.Rigidbody.velocity.magnitude * Time.deltaTime;
-                    bulletComponent.TraveledDistance += delta;
-                }
+                    ref var eventEntity = ref _bulletCollisionComponents.Add(bulletEntity);
+                    eventEntity.Collision = collision;
+                };
+
+                _world.Value.DelEntity(entity);
             }
         }
     }

@@ -7,6 +7,7 @@ using Logic.Units;
 using Logic.Units.Behaviour;
 using Logic.Units.Spawn;
 using Logic.Units.Weapon;
+using Logic.Units.Weapon.Bullets;
 using UnityEngine;
 
 namespace Logic
@@ -33,7 +34,7 @@ namespace Logic
                 .Add(new EnemiesDetectionSystem())
                 .Add(new WeaponControlSystem())
                 .Add(new UnitBehaviourControlSystem())
-                .Add(new BulletDestroyingSystem())
+                .Add(new BulletsDestructionSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())
 #endif

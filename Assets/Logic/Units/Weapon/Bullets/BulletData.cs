@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Logic.Units.Weapon
+namespace Logic.Units.Weapon.Bullets
 {
     [Serializable]
     public struct BulletData

@@ -5,6 +5,6 @@ namespace Logic.Units.Spawn
 {
     public struct SpawnRequestQueueComponent
     {
-        public Queue<Unit> UnitPrefabs;
+        public Queue<UnitData> Requests;
     }
 }
