@@ -17,9 +17,11 @@ MonoBehaviour:
     m_Values:
     - _prefab: {fileID: 5211124572725255912, guid: 5fa06d8699a07f742a5337c74bc9e8ef,
         type: 3}
+      _attackRange: 50
       _spawningTime: 3
       _initialHealthPoints: 100
     - _prefab: {fileID: 978919290917726313, guid: 4d82fd343638ed44fa42c2766edbf662,
         type: 3}
+      _attackRange: 120
       _spawningTime: 15
       _initialHealthPoints: 500

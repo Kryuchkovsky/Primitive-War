@@ -1,7 +1,6 @@
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using Logic.Teams;
-using Logic.Units.Weapon;
 using UnityEngine;
 
 namespace Logic.Units.Behaviour
@@ -14,7 +13,6 @@ namespace Logic.Units.Behaviour
         
         private EcsPool<UnitComponent> _unitComponents;
         private EcsPool<ShootingComponent> _shootingComponents;
-        private EcsPool<KineticWeaponComponent> _kineticWeaponComponents;
         private EcsPool<TeamComponent> _teamComponents;
 
         private EcsFilter _filter;
@@ -23,15 +21,9 @@ namespace Logic.Units.Behaviour
         {
             _unitComponents = _world.Value.GetPool<UnitComponent>();
             _shootingComponents = _world.Value.GetPool<ShootingComponent>();
-            _kineticWeaponComponents = _world.Value.GetPool<KineticWeaponComponent>();
             _teamComponents = _world.Value.GetPool<TeamComponent>();
             
-            _filter = _world.Value
-                .Filter<UnitComponent>()
-                .Inc<ShootingComponent>()
-                .Inc<KineticWeaponComponent>()
-                .Inc<TeamComponent>()
-                .End();
+            _filter = _world.Value.Filter<UnitComponent>().Inc<ShootingComponent>().Inc<TeamComponent>().End();
         }
 
         public void Run(IEcsSystems systems)
@@ -40,20 +32,19 @@ namespace Logic.Units.Behaviour
             {
                 ref var unitComponent = ref _unitComponents.Get(entity);
                 ref var shootingComponent = ref _shootingComponents.Get(entity);
-                ref var kineticWeaponComponent = ref _kineticWeaponComponents.Get(entity);
                 ref var teamComponent = ref _teamComponents.Get(entity);
 
                 if (shootingComponent.Target)
                 {
                     var distance = (shootingComponent.Target.transform.position - unitComponent.Unit.transform.position).magnitude;
-                    var canShooting = distance > kineticWeaponComponent.Data.BulletData.Distance;
+                    var canShooting = distance > unitComponent.Data.AttackRange;
                     shootingComponent.Target = canShooting ? shootingComponent.Target : null;
                 }
                 else
                 {
                     var matches = Physics.OverlapSphereNonAlloc(
                         unitComponent.Unit.transform.position, 
-                        kineticWeaponComponent.Data.BulletData.Distance, 
+                        unitComponent.Data.AttackRange, 
                         _colliders, 
                         teamComponent.EnemiesLayerMask);
 

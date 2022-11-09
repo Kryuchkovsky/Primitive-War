@@ -18,9 +18,9 @@ MonoBehaviour:
     - _bullet: {fileID: 3420932246917026894, guid: 38f77ac1bd753564ca51617ec232a9e3,
         type: 3}
       _bulletData:
-        Damage: 10
+        Damage: 100
         Speed: 30
-        Distance: 50
+        Distance: 200
         ExplosionRange: 0
         ExplosionForce: 0
       _shots: 3

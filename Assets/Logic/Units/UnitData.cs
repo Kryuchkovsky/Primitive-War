@@ -7,11 +7,13 @@ namespace Logic.Units
     public class UnitData
     {
         [SerializeField] private Unit _prefab;
-        [SerializeField] [Min(0)] private int _spawningTime = 3;
+        [SerializeField] [Min(0)] private float _attackRange = 30;
+        [SerializeField] [Min(0)] private float _spawningTime = 3;
         [SerializeField] [Min(1)] private float _initialHealthPoints = 100;
 
         public Unit Prefab => _prefab;
-        public int SpawningTime => _spawningTime;
+        public float AttackRange => _attackRange;
+        public float SpawningTime => _spawningTime;
         public float InitialHealthPoints => _initialHealthPoints;
     }
 }

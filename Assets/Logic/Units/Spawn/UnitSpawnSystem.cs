@@ -73,6 +73,7 @@ namespace Logic.Units.Spawn
 
                     ref var unitComponent = ref _unitComponents.Add(unitEntity);
                     unitComponent.Unit = unit;
+                    unitComponent.Data = data;
 
                     ref var healthComponent = ref _healthComponents.Add(unitEntity);
                     healthComponent.HealthPoints = data.InitialHealthPoints;
