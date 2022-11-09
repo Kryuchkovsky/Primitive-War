@@ -30,10 +30,12 @@ namespace Logic
                 .Add(new MapCreationSystem())
                 .Add(new SpawnRequestCreationSystem())
                 .Add(new UnitSpawnSystem())
+                .Add(new UnitDestructionSystem())
                 .Add(new UnitMovementControlSystem())
                 .Add(new EnemiesDetectionSystem())
                 .Add(new WeaponControlSystem())
                 .Add(new UnitBehaviourControlSystem())
+                .Add(new BulletCreationSystem())
                 .Add(new BulletsDestructionSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())

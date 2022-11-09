@@ -24,9 +24,11 @@ namespace Logic.Units.Spawn
         private EcsPool<KineticWeaponComponent> _kineticWeaponComponents;
         private EcsPool<WeaponReloadComponent> _weaponReloadComponents;
         private EcsPool<TeamComponent> _teamComponents;
+        private EcsPool<DamageComponent> _damageComponents;
 
         private EcsFilter _mapComponentsFilter;
         private EcsFilter _requestQueueComponentsFilter;
+        
         private MapHolder _map;
 
         public void Init(IEcsSystems systems)
@@ -40,6 +42,7 @@ namespace Logic.Units.Spawn
             _kineticWeaponComponents = _world.Value.GetPool<KineticWeaponComponent>();
             _weaponReloadComponents = _world.Value.GetPool<WeaponReloadComponent>();
             _teamComponents = _world.Value.GetPool<TeamComponent>();
+            _damageComponents = _world.Value.GetPool<DamageComponent>();
 
             _mapComponentsFilter = _world.Value.Filter<MapInformationComponent>().End();
             _requestQueueComponentsFilter = _world.Value.Filter<SpawnRequestQueueComponent>().Inc<TeamComponent>().End();
@@ -85,6 +88,14 @@ namespace Logic.Units.Spawn
 
                     ref var unitTeamComponent = ref _teamComponents.Add(unitEntity);
                     unitTeamComponent = teamComponent;
+
+                    unit.OnTakeDamage += damage =>
+                    {
+                        var damageEntity = _world.Value.NewEntity();
+                        ref var damageComponent = ref _damageComponents.Add(damageEntity);
+                        damageComponent.Entity = unitEntity;
+                        damageComponent.Damage = damage;
+                    };
                 }
             }
         }

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Logic.Units.Weapon.Bullets
 {
     public struct BulletComponent
@@ -7,10 +5,5 @@ namespace Logic.Units.Weapon.Bullets
         public Bullet Bullet;
         public BulletData Data;
         public float TraveledDistance;
-    }
-
-    public struct BulletCollisionComponent
-    {
-        public Collision Collision;
     }
 }

@@ -57,8 +57,11 @@ namespace Logic.Units.Weapon.Bullets
 
                 bullet.OnCollide += collision =>
                 {
-                    ref var eventEntity = ref _bulletCollisionComponents.Add(bulletEntity);
-                    eventEntity.Collision = collision;
+                    if (!_bulletCollisionComponents.Has(bulletEntity))
+                    {
+                        ref var eventEntity = ref _bulletCollisionComponents.Add(bulletEntity);
+                        eventEntity.Collision = collision;
+                    }
                 };
 
                 _world.Value.DelEntity(entity);

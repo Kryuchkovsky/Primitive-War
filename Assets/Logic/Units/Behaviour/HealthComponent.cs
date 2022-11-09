@@ -4,4 +4,10 @@ namespace Logic.Units.Behaviour
     {
         public float HealthPoints;
     }
+
+    public struct DamageComponent
+    {
+        public int Entity;
+        public float Damage;
+    }
 }
