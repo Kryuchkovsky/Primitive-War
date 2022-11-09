@@ -14,8 +14,8 @@ namespace Logic.Units
 
         private Transform _shoulder;
         private Quaternion _leftHandRotation;
-
-        public Vector3 LookDirection { get; set; }
+        private Vector3 _lookDirection;
+        
         public override KineticWeaponType KineticWeaponType => KineticWeaponType.AK74;
 
         private void Start()
@@ -25,16 +25,19 @@ namespace Logic.Units
 
         private void Update()
         {
+            _lookDirection = transform.forward;
             _leftHandRotation = _leftPoint.rotation;
             _leftPoint.position = _manualWeapon.PointForLeftHand.position;
             _aimPivot.position = _shoulder.position;
-            _aimPivot.rotation = Quaternion.LookRotation(LookDirection);
+            var direction = 
+            _aimPivot.rotation = Quaternion.LookRotation(_lookDirection);
+            Debug.DrawRay(transform.position, _lookDirection * 5, Color.red);
         }
 
         private void OnAnimatorIK()
         {
             _animator.SetLookAtWeight(1, 0, 1);
-            _animator.SetLookAtPosition(LookDirection);
+            _animator.SetLookAtPosition(_lookDirection);
             
             _animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
             _animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
@@ -51,6 +54,7 @@ namespace Logic.Units
         {
             var rotation = Quaternion.LookRotation(direction);
             _model.rotation = Quaternion.Lerp(_model.rotation, rotation, Time.deltaTime * 5);
+            _lookDirection = direction;
         }
     }
 }

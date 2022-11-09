@@ -15,7 +15,7 @@ MonoBehaviour:
   _weaponData:
     m_Keys: 0000000001000000
     m_Values:
-    - _bullet: {fileID: 3420932246917026894, guid: b58f37acded865f49b897ff1d573f0cb,
+    - _bullet: {fileID: 3420932246917026894, guid: 38f77ac1bd753564ca51617ec232a9e3,
         type: 3}
       _bulletData:
         Damage: 10

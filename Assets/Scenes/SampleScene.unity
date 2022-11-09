@@ -236,7 +236,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &201726610
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -727,7 +727,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1714534987}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab9fd1d3db5d1db479f2d19b91b68fd5, type: 3}
   m_Name: 
@@ -735,6 +735,8 @@ MonoBehaviour:
   _map: {fileID: 8876565074122342989, guid: 473dc1bdb34dac94287aadcde470dd99, type: 3}
   _unitList: {fileID: 11400000, guid: 8685ed0b265f342449e950449064caa7, type: 2}
   _teamsConfiguration: {fileID: 11400000, guid: 47b1e5d08fa415c4c924fe4af72741c8,
+    type: 2}
+  _kineticWeaponConfiguration: {fileID: 11400000, guid: 51bbaee8ef2bcdc4b884f41c6eb8280e,
     type: 2}
 --- !u!4 &1714534989
 Transform:
@@ -763,6 +765,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoldierBot
       objectReference: {fileID: 0}
+    - target: {fileID: 5705617192552910919, guid: 5fa06d8699a07f742a5337c74bc9e8ef,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8751960015124603476, guid: 5fa06d8699a07f742a5337c74bc9e8ef,
         type: 3}
       propertyPath: m_RootOrder
@@ -771,17 +778,17 @@ PrefabInstance:
     - target: {fileID: 8751960015124603476, guid: 5fa06d8699a07f742a5337c74bc9e8ef,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.08933163
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8751960015124603476, guid: 5fa06d8699a07f742a5337c74bc9e8ef,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.49999994
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8751960015124603476, guid: 5fa06d8699a07f742a5337c74bc9e8ef,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.26712674
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8751960015124603476, guid: 5fa06d8699a07f742a5337c74bc9e8ef,
         type: 3}

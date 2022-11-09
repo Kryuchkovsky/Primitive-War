@@ -76,10 +76,11 @@ namespace Logic.Units.Spawn
                         ref var unitTeamComponent = ref _teamComponents.Add(unitEntity);
                         unitTeamComponent = teamComponent;
 
-                        ref var kineticWeaponComponent = ref _kineticWeaponComponents.Add(entity);
+                        ref var kineticWeaponComponent = ref _kineticWeaponComponents.Add(unitEntity);
+                        kineticWeaponComponent.ShotPoint = unit.ManualWeaponHolder.ShotPoint;
                         kineticWeaponComponent.Data = _kineticWeaponConfiguration.Value.GetDataByType(unit.KineticWeaponType);
 
-                        _weaponReloadComponents.Add(entity);
+                        _weaponReloadComponents.Add(unitEntity);
                     }
                 }
             }

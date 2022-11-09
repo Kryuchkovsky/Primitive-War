@@ -59,7 +59,8 @@ namespace Logic.Units.Weapon
             weaponReloadComponent.ReloadTime = weaponReloadComponent.ShotsBeforeReload > 0
                 ? kineticWeaponComponent.Data.ReloadTimeBetweenShots
                 : kineticWeaponComponent.Data.MainReloadTime;
-
+            
+            bullet.Rigidbody.AddForce(bullet.transform.forward * kineticWeaponComponent.Data.BulletData.Speed, ForceMode.VelocityChange);
             var bulletEntity = _world.Value.NewEntity();
             ref var bulletComponent = ref _bulletComponents.Add(bulletEntity);
             bulletComponent.Bullet = bullet;
