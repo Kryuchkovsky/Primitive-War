@@ -8,10 +8,11 @@ namespace Logic.Level.Initialization
     public sealed class MapCreationSystem : IEcsInitSystem
     {
         private readonly EcsWorldInject _world = default;
+        private readonly EcsCustomInject<MapHolder> _map;
 
         private EcsPool<MapInformationComponent> _mapInformationComponents;
-        private EcsCustomInject<MapHolder> _map;
 
+        
         public void Init(IEcsSystems systems)
         {
             _mapInformationComponents = _world.Value.GetPool<MapInformationComponent>();

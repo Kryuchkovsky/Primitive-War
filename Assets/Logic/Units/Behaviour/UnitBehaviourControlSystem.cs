@@ -2,7 +2,7 @@ using System.Linq;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using Logic.Level.Initialization;
-using Logic.Teams;
+using Logic.Level.Map;
 using Logic.Units.Weapon;
 
 namespace Logic.Units.Behaviour
@@ -16,10 +16,10 @@ namespace Logic.Units.Behaviour
         private EcsPool<MovementComponent> _movementComponents;
         private EcsPool<ShootingComponent> _shootingComponents;
         private EcsPool<KineticWeaponComponent> _kineticWeaponComponents;
-        private EcsPool<TeamComponent> _teamComponents;
 
         private EcsFilter _mapComponentsFilter;
         private EcsFilter _unitComponentsFilter;
+        private MapHolder _map;
 
         public void Init(IEcsSystems systems)
         {
@@ -28,7 +28,6 @@ namespace Logic.Units.Behaviour
             _movementComponents = _world.Value.GetPool<MovementComponent>();
             _shootingComponents = _world.Value.GetPool<ShootingComponent>();
             _kineticWeaponComponents = _world.Value.GetPool<KineticWeaponComponent>();
-            _teamComponents = _world.Value.GetPool<TeamComponent>();
 
             _mapComponentsFilter = _world.Value.Filter<MapInformationComponent>().End();
             _unitComponentsFilter = _world.Value
@@ -36,32 +35,35 @@ namespace Logic.Units.Behaviour
                 .Inc<MovementComponent>()
                 .Inc<ShootingComponent>()
                 .Inc<KineticWeaponComponent>()
-                .Inc<TeamComponent>()
                 .End();
+            
+            var mapEntity = _mapComponentsFilter.GetRawEntities().First();
+            _map = _mapInformationComponents.Get(mapEntity).Map;
         }
 
         public void Run(IEcsSystems systems)
         {
-            var mapEntity = _mapComponentsFilter.GetRawEntities().First();
-            ref var map = ref _mapInformationComponents.Get(mapEntity);
-            
             foreach (var entity in _unitComponentsFilter)
             {
                 ref var unitComponent = ref _unitComponents.Get(entity);
                 ref var movementComponent = ref _movementComponents.Get(entity);
                 ref var shootingComponent = ref _shootingComponents.Get(entity);
                 ref var kineticWeaponComponent = ref _kineticWeaponComponents.Get(entity);
-                ref var teamComponent = ref _teamComponents.Get(entity);
-
-                kineticWeaponComponent.IsShooting = shootingComponent.Target;
                 
+                var direction = shootingComponent.Target
+                    ? shootingComponent.Target.transform.position - unitComponent.Unit.transform.position
+                    : unitComponent.Unit.transform.forward;
+
+                unitComponent.Unit.LookInDirection(direction);
+                kineticWeaponComponent.IsShooting = shootingComponent.Target;
+
                 if (shootingComponent.Target)
                 {
                     movementComponent.TargetPosition = unitComponent.Unit.transform.position;
                 }
                 else
                 {
-                    movementComponent.TargetPosition = map.Map.CaptureZonePosition;
+                    movementComponent.TargetPosition = _map.CaptureZonePosition;
                 }
             }
         }

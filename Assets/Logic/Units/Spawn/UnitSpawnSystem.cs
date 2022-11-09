@@ -2,6 +2,7 @@ using System.Linq;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using Logic.Level.Initialization;
+using Logic.Level.Map;
 using Logic.Teams;
 using Logic.Units.Behaviour;
 using Logic.Units.Weapon;
@@ -14,74 +15,71 @@ namespace Logic.Units.Spawn
         private readonly EcsWorldInject _world = default;
         private readonly EcsCustomInject<KineticWeaponConfiguration> _kineticWeaponConfiguration;
 
+        private EcsPool<MapInformationComponent> _mapInformationComponents;
+        private EcsPool<SpawnRequestQueueComponent> _requestQueueComponents;
         private EcsPool<UnitComponent> _unitComponents;
         private EcsPool<MovementComponent> _movementComponents;
         private EcsPool<ShootingComponent> _shootingComponents;
-        private EcsPool<MapInformationComponent> _mapInformationComponents;
-        private EcsPool<SpawnRequestQueueComponent> _requestQueueComponents;
-        private EcsPool<TeamComponent> _teamComponents;
         private EcsPool<KineticWeaponComponent> _kineticWeaponComponents;
         private EcsPool<WeaponReloadComponent> _weaponReloadComponents;
+        private EcsPool<TeamComponent> _teamComponents;
 
-        private EcsFilter _mapInformationComponentFilter;
-        private EcsFilter _requestQueueComponentFilter;
-        
+        private EcsFilter _mapComponentsFilter;
+        private EcsFilter _requestQueueComponentsFilter;
+        private MapHolder _map;
+
         public void Init(IEcsSystems systems)
         {
+            _mapInformationComponents = _world.Value.GetPool<MapInformationComponent>();
+            _requestQueueComponents = _world.Value.GetPool<SpawnRequestQueueComponent>();
             _unitComponents = _world.Value.GetPool<UnitComponent>();
             _movementComponents = _world.Value.GetPool<MovementComponent>();
             _shootingComponents = _world.Value.GetPool<ShootingComponent>();
-            _mapInformationComponents = _world.Value.GetPool<MapInformationComponent>();
-            _requestQueueComponents = _world.Value.GetPool<SpawnRequestQueueComponent>();
-            _teamComponents = _world.Value.GetPool<TeamComponent>();
             _kineticWeaponComponents = _world.Value.GetPool<KineticWeaponComponent>();
             _weaponReloadComponents = _world.Value.GetPool<WeaponReloadComponent>();
-            
-            _mapInformationComponentFilter = _world.Value.Filter<MapInformationComponent>().End();
-            _requestQueueComponentFilter = _world.Value.Filter<SpawnRequestQueueComponent>().Inc<TeamComponent>().End();
+            _teamComponents = _world.Value.GetPool<TeamComponent>();
+
+            _mapComponentsFilter = _world.Value.Filter<MapInformationComponent>().End();
+            _requestQueueComponentsFilter = _world.Value.Filter<SpawnRequestQueueComponent>().Inc<TeamComponent>().End();
+
+            var mapEntity = _mapComponentsFilter.GetRawEntities().First();
+            _map = _mapInformationComponents.Get(mapEntity).Map;
         }
 
         public void Run(IEcsSystems systems)
         {
-            foreach (var mapEntity in _mapInformationComponentFilter)
+            foreach (var entity in _requestQueueComponentsFilter)
             {
-                ref var mapInformationComponent = ref _mapInformationComponents.Get(mapEntity);
-                
-                foreach (var entity in _requestQueueComponentFilter)
+                ref var requestQueueComponent = ref _requestQueueComponents.Get(entity);
+                ref var teamComponent = ref _teamComponents.Get(entity);
+
+                if (requestQueueComponent.UnitPrefabs.Count > 0)
                 {
-                    ref var requestQueueComponent = ref _requestQueueComponents.Get(entity);
-                    ref var teamComponent = ref _teamComponents.Get(entity);
+                    var unitPrefab = requestQueueComponent.UnitPrefabs.Dequeue();
+                    var teamId = teamComponent.TeamId;
+                    var spawnPlace = _map.SpawnPlaces.First(place => place.Number == teamId);
+                    var position = spawnPlace.SpawnPoints[Random.Range(0, spawnPlace.SpawnPoints.Count)].position;
+                    var unit = Object.Instantiate(unitPrefab, position, Quaternion.identity, _map.UnitsContainer);
+                    unit.SetColor(teamComponent.Color);
+                    unit.TeamComponent = teamComponent;
+                    unit.gameObject.layer = teamComponent.LayerIndex;
 
-                    if (requestQueueComponent.UnitPrefabs.Count > 0)
-                    {
-                        var unitPrefab = requestQueueComponent.UnitPrefabs.Dequeue();
-                        var teamId = teamComponent.TeamId;
-                        var spawnPlace = mapInformationComponent.Map.SpawnPlaces.First(place => place.Number == teamId);
-                        var position = spawnPlace.SpawnPoints[Random.Range(0, spawnPlace.SpawnPoints.Count)].position;
-                        var unit = Object.Instantiate(unitPrefab, position, Quaternion.identity, mapInformationComponent.Map.transform);
-                        unit.SetColor(teamComponent.Color);
-                        unit.TeamComponent = teamComponent;
-                        unit.gameObject.layer = teamComponent.LayerIndex;
-                        
-                        var unitEntity = _world.Value.NewEntity();
-                        
-                        ref var unitComponent = ref _unitComponents.Add(unitEntity);
-                        unitComponent.Unit = unit;
-                        
-                        ref var movementComponent = ref _movementComponents.Add(unitEntity);
-                        movementComponent.TargetPosition = mapInformationComponent.Map.CaptureZonePosition;
+                    var unitEntity = _world.Value.NewEntity();
 
-                        _shootingComponents.Add(unitEntity);
-                        
-                        ref var unitTeamComponent = ref _teamComponents.Add(unitEntity);
-                        unitTeamComponent = teamComponent;
+                    ref var unitComponent = ref _unitComponents.Add(unitEntity);
+                    unitComponent.Unit = unit;
 
-                        ref var kineticWeaponComponent = ref _kineticWeaponComponents.Add(unitEntity);
-                        kineticWeaponComponent.ShotPoint = unit.ManualWeaponHolder.ShotPoint;
-                        kineticWeaponComponent.Data = _kineticWeaponConfiguration.Value.GetDataByType(unit.KineticWeaponType);
+                    _movementComponents.Add(unitEntity);
+                    _shootingComponents.Add(unitEntity);
 
-                        _weaponReloadComponents.Add(unitEntity);
-                    }
+                    ref var kineticWeaponComponent = ref _kineticWeaponComponents.Add(unitEntity);
+                    kineticWeaponComponent.ShotPoint = unit.ManualWeaponHolder.ShotPoint;
+                    kineticWeaponComponent.Data = _kineticWeaponConfiguration.Value.GetDataByType(unit.KineticWeaponType);
+
+                    _weaponReloadComponents.Add(unitEntity);
+
+                    ref var unitTeamComponent = ref _teamComponents.Add(unitEntity);
+                    unitTeamComponent = teamComponent;
                 }
             }
         }

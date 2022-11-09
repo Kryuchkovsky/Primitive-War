@@ -18,14 +18,4 @@ namespace Logic.Units.Weapon
         public float ReloadTimeBetweenShots => _reloadTimeBetweenShots;
         public float MainReloadTime => _mainReloadTime;
     }
-
-    [Serializable]
-    public struct BulletData
-    {
-        [Min(0)] public float Damage;
-        [Min(0)] public float Speed;
-        [Min(0)] public float Distance;
-        [Min(0)] public float ExplosionRange;
-        [Min(0)] public float ExplosionForce;
-    }
 }
