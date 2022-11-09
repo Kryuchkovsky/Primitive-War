@@ -93,7 +93,7 @@ namespace Logic.Units.Spawn
                     {
                         var damageEntity = _world.Value.NewEntity();
                         ref var damageComponent = ref _damageComponents.Add(damageEntity);
-                        damageComponent.Entity = unitEntity;
+                        damageComponent.DamagedEntity = _world.Value.PackEntity(unitEntity);
                         damageComponent.Damage = damage;
                     };
                 }

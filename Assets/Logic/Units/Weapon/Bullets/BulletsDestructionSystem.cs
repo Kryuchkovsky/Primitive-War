@@ -45,7 +45,7 @@ namespace Logic.Units.Weapon.Bullets
                 ref var bulletComponent = ref _bulletComponents.Get(entity);
                 ref var bulletCollisionComponent = ref _bulletCollisionComponents.Get(entity);
 
-                if (bulletCollisionComponent.Collision.collider.TryGetComponent(out Unit unit))
+                if (bulletCollisionComponent.Collision != null && bulletCollisionComponent.Collision.collider.TryGetComponent(out Unit unit))
                 {
                     unit.TakeDamage(bulletComponent.Data.Damage);
                 }

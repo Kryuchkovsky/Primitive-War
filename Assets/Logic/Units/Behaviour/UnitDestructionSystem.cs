@@ -28,15 +28,16 @@ namespace Logic.Units.Behaviour
             foreach (var entity in _damageComponentsFilter)
             {
                 ref var damageComponent = ref _damageComponents.Get(entity);
-                ref var unitComponent = ref _unitComponents.Get(damageComponent.Entity);
-                ref var healthComponent = ref _healthComponents.Get(damageComponent.Entity);
+                damageComponent.DamagedEntity.Unpack(_world.Value, out var damagedEntity);
+                ref var unitComponent = ref _unitComponents.Get(damagedEntity);
+                ref var healthComponent = ref _healthComponents.Get(damagedEntity);
 
                 healthComponent.HealthPoints -= damageComponent.Damage;
                 
                 if (healthComponent.HealthPoints <= 0)
                 {
                     Object.Destroy(unitComponent.Unit.gameObject);
-                    _world.Value.DelEntity(damageComponent.Entity);
+                    _world.Value.DelEntity(damagedEntity);
                 }
                 
                 _world.Value.DelEntity(entity);

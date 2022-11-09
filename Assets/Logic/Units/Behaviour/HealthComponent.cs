@@ -1,3 +1,5 @@
+using Leopotam.EcsLite;
+
 namespace Logic.Units.Behaviour
 {
     public struct HealthComponent
@@ -7,7 +9,7 @@ namespace Logic.Units.Behaviour
 
     public struct DamageComponent
     {
-        public int Entity;
+        public EcsPackedEntity DamagedEntity;
         public float Damage;
     }
 }
