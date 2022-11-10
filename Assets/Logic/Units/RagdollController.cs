@@ -9,24 +9,24 @@ namespace Logic.Units
         [SerializeField] private List<Collider> _ragdollColliders;
         [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private Collider _collider;
-        [SerializeField] private Transform _hipsTransform;
+        [SerializeField] private Transform _pelvisTransform;
         [SerializeField] private Animator _animator;
 
-        private Vector3 _defaultHipsPosition;
+        private Vector3 _defaultPelvisPosition;
         private bool _inRagdollState;
         
         private void Awake()
         {
-            _defaultHipsPosition = _hipsTransform.localPosition;
+            _defaultPelvisPosition = _pelvisTransform.localPosition;
         }
 
         public void SetRagdollStatus(bool isEnabled)
         {
             if (_inRagdollState && !isEnabled)
             {
-                var position = _hipsTransform.position;
+                var position = _pelvisTransform.position;
                 transform.position = position;
-                _hipsTransform.localPosition = _defaultHipsPosition;
+                _pelvisTransform.localPosition = _defaultPelvisPosition;
             }
             
             _rigidbody.isKinematic = isEnabled;

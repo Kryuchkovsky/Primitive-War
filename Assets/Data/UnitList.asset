@@ -15,7 +15,7 @@ MonoBehaviour:
   _units:
     m_Keys: 0000000001000000
     m_Values:
-    - _prefab: {fileID: 5211124572725255912, guid: 5fa06d8699a07f742a5337c74bc9e8ef,
+    - _prefab: {fileID: 9065948347889339177, guid: 5fa06d8699a07f742a5337c74bc9e8ef,
         type: 3}
       _attackRange: 50
       _spawningTime: 3
