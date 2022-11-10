@@ -6,6 +6,7 @@ namespace Logic.Units.Weapon.Bullets
     [Serializable]
     public struct BulletData
     {
+        public LayerMask LayerMask;
         [Min(0)] public float Damage;
         [Min(0)] public float Speed;
         [Min(0)] public float Distance;

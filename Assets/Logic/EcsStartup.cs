@@ -2,6 +2,7 @@ using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using Logic.Level.Initialization;
 using Logic.Level.Map;
+using Logic.Mechanics.Explosions;
 using Logic.Teams;
 using Logic.Units;
 using Logic.Units.Behaviour;
@@ -37,6 +38,7 @@ namespace Logic
                 .Add(new UnitBehaviourControlSystem())
                 .Add(new BulletCreationSystem())
                 .Add(new BulletsDestructionSystem())
+                .Add(new ExplosionCreationSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())
 #endif
