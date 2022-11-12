@@ -24,6 +24,7 @@ namespace Logic.Units
         
         public void SetColor(Color color)
         {
+            return;
             foreach (var renderer in _unitRenderers)
             {
                 var materials = renderer.Renderer.materials;

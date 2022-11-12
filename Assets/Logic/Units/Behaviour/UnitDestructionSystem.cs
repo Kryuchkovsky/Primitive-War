@@ -28,29 +28,32 @@ namespace Logic.Units.Behaviour
             foreach (var entity in _damageComponentsFilter)
             {
                 ref var damageComponent = ref _damageComponents.Get(entity);
-                damageComponent.DamagedEntity.Unpack(_world.Value, out var damagedEntity);
-                ref var unitComponent = ref _unitComponents.Get(damagedEntity);
-                ref var healthComponent = ref _healthComponents.Get(damagedEntity);
-
-                healthComponent.HealthPoints -= damageComponent.Damage;
                 
-                if (healthComponent.HealthPoints <= 0)
+                if (damageComponent.DamagedEntity.Unpack(_world.Value, out var damagedEntity))
                 {
-                    if (unitComponent.Unit is SoldierUnit)
-                    {
-                        var solider = unitComponent.Unit as SoldierUnit;
-                        solider.RagdollController.SetRagdollStatus(true);
-                        solider.NavMeshAgent.enabled = false;
-                    }
-                    else
-                    {
-                        Object.Destroy(unitComponent.Unit.gameObject);
-                    }
+                    ref var unitComponent = ref _unitComponents.Get(damagedEntity);
+                    ref var healthComponent = ref _healthComponents.Get(damagedEntity);
 
-                    _world.Value.DelEntity(damagedEntity);
-                }
+                    healthComponent.HealthPoints -= damageComponent.Damage;
                 
-                _world.Value.DelEntity(entity);
+                    if (healthComponent.HealthPoints <= 0)
+                    {
+                        if (unitComponent.Unit is SoldierUnit)
+                        {
+                            var solider = unitComponent.Unit as SoldierUnit;
+                            solider.RagdollController.SetRagdollStatus(true);
+                            solider.NavMeshAgent.enabled = false;
+                        }
+                        else
+                        {
+                            Object.Destroy(unitComponent.Unit.gameObject);
+                        }
+
+                        _world.Value.DelEntity(damagedEntity);
+                    }
+                
+                    _world.Value.DelEntity(entity);
+                }
             }
         }
     }
