@@ -10,11 +10,11 @@ namespace Logic.Units.Render
         private readonly EcsCustomInject<UnitList> _unitList;
         private readonly EcsWorldInject _world;
 
-        private int _instanceCount = 100000;
         private Mesh _instanceMesh;
         private Material _instanceMaterial;
         private int _subMeshIndex = 0;
 
+        private int _instanceCount = 0;
         private int _cachedInstanceCount = -1;
         private int _cachedSubMeshIndex = -1;
         private ComputeBuffer _positionBuffer;
@@ -25,7 +25,7 @@ namespace Logic.Units.Render
 
         public void Init(IEcsSystems systems)
         {
-            _filter = _world.Value.Filter<UnitRenderComponent>().End();
+            _filter = _world.Value.Filter<UnitComponent>().Exc<UnitRenderComponent>().End();
             
             _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
             UpdateBuffers();
@@ -33,11 +33,16 @@ namespace Logic.Units.Render
 
         public void Run(IEcsSystems systems)
         {
-            // Update starting position buffer
+            foreach (var entity in _filter)
+            {
+                
+            }
+
+            _instanceCount = _filter.GetEntitiesCount();
+            
             if (_cachedInstanceCount != _instanceCount || _cachedSubMeshIndex != _subMeshIndex)
                 UpdateBuffers();
-
-            // Render
+            
             Graphics.DrawMeshInstancedIndirect(_instanceMesh, _subMeshIndex, _instanceMaterial,
                 new Bounds(Vector3.zero, new Vector3(100.0f, 100.0f, 100.0f)), _argsBuffer);
         }
@@ -55,21 +60,25 @@ namespace Logic.Units.Render
 
         private void UpdateBuffers()
         {
-            // Ensure submesh index is in range
-            if (_instanceMesh != null)
+            if (_instanceMesh)
+            {
                 _subMeshIndex = Mathf.Clamp(_subMeshIndex, 0, _instanceMesh.subMeshCount - 1);
+            }
 
-            // Positions
             if (_positionBuffer != null)
+            {
                 _positionBuffer.Release();
+            }
+
             _positionBuffer = new ComputeBuffer(_instanceCount, 16);
-            Vector4[] positions = new Vector4[_instanceCount];
+            var positions = new Vector4[_instanceCount];
+            
             for (int i = 0; i < _instanceCount; i++)
             {
-                float angle = Random.Range(0.0f, Mathf.PI * 2.0f);
-                float distance = Random.Range(20.0f, 100.0f);
-                float height = Random.Range(-2.0f, 2.0f);
-                float size = Random.Range(0.05f, 0.25f);
+                var angle = Random.Range(0.0f, Mathf.PI * 2.0f);
+                var distance = Random.Range(20.0f, 100.0f);
+                var height = Random.Range(-2.0f, 2.0f);
+                var size = Random.Range(0.05f, 0.25f);
                 positions[i] = new Vector4(Mathf.Sin(angle) * distance, height, Mathf.Cos(angle) * distance, size);
             }
 
@@ -96,13 +105,14 @@ namespace Logic.Units.Render
         }
     }
 
-    public struct UnitRenderComponent
+    public struct UnitRenderData
     {
         public Mesh Mesh;
+        public Material Material;
         public UnitType Type;
     }
 
-    public struct UnitRenderRequest
+    public struct UnitRenderComponent
     {
         public UnitType Type;
     }

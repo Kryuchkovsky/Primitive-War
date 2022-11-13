@@ -5,6 +5,7 @@ using Logic.Level.Initialization;
 using Logic.Level.Map;
 using Logic.Teams;
 using Logic.Units.Behaviour;
+using Logic.Units.Render;
 using Logic.Units.Weapon;
 using UnityEngine;
 
@@ -18,6 +19,7 @@ namespace Logic.Units.Spawn
         private EcsPool<MapInformationComponent> _mapInformationComponents;
         private EcsPool<SpawnRequestQueueComponent> _requestQueueComponents;
         private EcsPool<UnitComponent> _unitComponents;
+        private EcsPool<UnitRenderComponent> _renderComponents;
         private EcsPool<HealthComponent> _healthComponents;
         private EcsPool<MovementComponent> _movementComponents;
         private EcsPool<ShootingComponent> _shootingComponents;
@@ -36,6 +38,7 @@ namespace Logic.Units.Spawn
             _mapInformationComponents = _world.Value.GetPool<MapInformationComponent>();
             _requestQueueComponents = _world.Value.GetPool<SpawnRequestQueueComponent>();
             _unitComponents = _world.Value.GetPool<UnitComponent>();
+            _renderComponents = _world.Value.GetPool<UnitRenderComponent>();
             _healthComponents = _world.Value.GetPool<HealthComponent>();
             _movementComponents = _world.Value.GetPool<MovementComponent>();
             _shootingComponents = _world.Value.GetPool<ShootingComponent>();
@@ -74,6 +77,9 @@ namespace Logic.Units.Spawn
                     ref var unitComponent = ref _unitComponents.Add(unitEntity);
                     unitComponent.Unit = unit;
                     unitComponent.Data = data;
+
+                    ref var renderComponent = ref _renderComponents.Add(unitEntity);
+                    renderComponent.Type = data.Type;
 
                     ref var healthComponent = ref _healthComponents.Add(unitEntity);
                     healthComponent.HealthPoints = data.InitialHealthPoints;
