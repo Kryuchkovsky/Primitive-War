@@ -51,9 +51,9 @@ namespace Logic.Units.Behaviour
 
                         _world.Value.DelEntity(damagedEntity);
                     }
-                
-                    _world.Value.DelEntity(entity);
                 }
+                
+                _world.Value.DelEntity(entity);
             }
         }
     }

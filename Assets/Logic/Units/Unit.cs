@@ -12,6 +12,7 @@ namespace Logic.Units
         public event Action<float> OnTakeDamage; 
 
         [SerializeField] protected List<UnitRenderer> _unitRenderers;
+        [SerializeField] protected Renderer _renderer;
         [SerializeField] protected NavMeshAgent _navNavMeshAgent;
         [SerializeField] protected ManualWeaponHolder _manualWeapon;
 
