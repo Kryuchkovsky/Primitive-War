@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using Logic.Units.Behaviour;
@@ -10,88 +11,67 @@ namespace Logic.Units.Render
         private readonly EcsCustomInject<UnitList> _unitList;
         private readonly EcsWorldInject _world;
 
-        private Mesh _instanceMesh;
-        private Material _instanceMaterial;
-        private int _subMeshIndex = 0;
-
-        private int _instanceCount = 0;
-        private int _cachedInstanceCount = -1;
-        private int _cachedSubMeshIndex = -1;
+        private EcsPool<UnitRenderRequest> _renderRequests;
+        private EcsFilter _filter;
+        
         private ComputeBuffer _positionBuffer;
         private ComputeBuffer _argsBuffer;
         private readonly uint[] _args = new uint[5] { 0, 0, 0, 0, 0 };
 
-        private EcsFilter _filter;
-
         public void Init(IEcsSystems systems)
         {
-            _filter = _world.Value.Filter<UnitComponent>().Exc<UnitRenderComponent>().End();
-            
+            _renderRequests = _world.Value.GetPool<UnitRenderRequest>();
+            _filter = _world.Value.Filter<UnitRenderRequest>().End();
             _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
-            UpdateBuffers();
         }
 
         public void Run(IEcsSystems systems)
         {
             foreach (var entity in _filter)
             {
-                
-            }
+                ref var renderRequest = ref _renderRequests.Get(entity);
 
-            _instanceCount = _filter.GetEntitiesCount();
-            
-            if (_cachedInstanceCount != _instanceCount || _cachedSubMeshIndex != _subMeshIndex)
-                UpdateBuffers();
-            
-            Graphics.DrawMeshInstancedIndirect(_instanceMesh, _subMeshIndex, _instanceMaterial,
-                new Bounds(Vector3.zero, new Vector3(100.0f, 100.0f, 100.0f)), _argsBuffer);
+                if (renderRequest.CashedInstanceCount != renderRequest.InstanceCount ||
+                    renderRequest.CachedSubMeshIndex != renderRequest.SubMeshIndex)
+                {
+                    UpdateBuffers(ref renderRequest);
+                }
+
+                Graphics.DrawMeshInstancedIndirect(
+                    renderRequest.Mesh, 
+                    renderRequest.SubMeshIndex, 
+                    renderRequest.Material,
+                    new Bounds(Vector3.zero, new Vector3(100.0f, 100.0f, 100.0f)), 
+                    _argsBuffer);
+            }
         }
 
         public void Destroy(IEcsSystems systems)
         {
-            if (_positionBuffer != null)
-                _positionBuffer.Release();
+            _positionBuffer?.Release();
             _positionBuffer = null;
-
-            if (_argsBuffer != null)
-                _argsBuffer.Release();
+            _argsBuffer?.Release();
             _argsBuffer = null;
         }
 
-        private void UpdateBuffers()
+        private void UpdateBuffers(ref UnitRenderRequest request)
         {
-            if (_instanceMesh)
+            if (request.Mesh)
             {
-                _subMeshIndex = Mathf.Clamp(_subMeshIndex, 0, _instanceMesh.subMeshCount - 1);
+                request.SubMeshIndex = Mathf.Clamp(request.SubMeshIndex, 0, request.Mesh.subMeshCount - 1);
             }
 
-            if (_positionBuffer != null)
-            {
-                _positionBuffer.Release();
-            }
-
-            _positionBuffer = new ComputeBuffer(_instanceCount, 16);
-            var positions = new Vector4[_instanceCount];
+            _positionBuffer?.Release();
+            _positionBuffer = new ComputeBuffer(request.InstanceCount, 16);
+            _positionBuffer.SetData(request.Positions);
+            request.Material.SetBuffer("positionBuffer", _positionBuffer);
             
-            for (int i = 0; i < _instanceCount; i++)
+            if (request.Mesh)
             {
-                var angle = Random.Range(0.0f, Mathf.PI * 2.0f);
-                var distance = Random.Range(20.0f, 100.0f);
-                var height = Random.Range(-2.0f, 2.0f);
-                var size = Random.Range(0.05f, 0.25f);
-                positions[i] = new Vector4(Mathf.Sin(angle) * distance, height, Mathf.Cos(angle) * distance, size);
-            }
-
-            _positionBuffer.SetData(positions);
-            _instanceMaterial.SetBuffer("positionBuffer", _positionBuffer);
-
-            // Indirect args
-            if (_instanceMesh != null)
-            {
-                _args[0] = (uint)_instanceMesh.GetIndexCount(_subMeshIndex);
-                _args[1] = (uint)_instanceCount;
-                _args[2] = (uint)_instanceMesh.GetIndexStart(_subMeshIndex);
-                _args[3] = (uint)_instanceMesh.GetBaseVertex(_subMeshIndex);
+                _args[0] = (uint)request.Mesh.GetIndexCount(request.SubMeshIndex);
+                _args[1] = (uint)request.InstanceCount;
+                _args[2] = (uint)request.Mesh.GetIndexStart(request.SubMeshIndex);
+                _args[3] = (uint)request.Mesh.GetBaseVertex(request.SubMeshIndex);
             }
             else
             {
@@ -100,9 +80,89 @@ namespace Logic.Units.Render
 
             _argsBuffer.SetData(_args);
 
-            _cachedInstanceCount = _instanceCount;
-            _cachedSubMeshIndex = _subMeshIndex;
+            request.CashedInstanceCount = request.InstanceCount;
+            request.CachedSubMeshIndex = request.SubMeshIndex;
         }
+    }
+    
+     public sealed class UnitRenderRequestCreationSystem : IEcsInitSystem, IEcsRunSystem
+    {
+        private readonly EcsCustomInject<UnitRenderDataList> _dataList;
+        private readonly EcsWorldInject _world;
+
+        private Dictionary<UnitType, UnitRenderInfo> _unitRenderInfo;
+
+        private EcsPool<UnitRenderRequest> _renderRequests;
+        private EcsPool<UnitComponent> _unitComponents;
+        private EcsPool<UnitRenderComponent> _renderComponents;
+
+        private EcsFilter _renderRequestsFilter;
+        private EcsFilter _renderComponentsFilter;
+
+        public void Init(IEcsSystems systems)
+        {
+            _unitRenderInfo = new Dictionary<UnitType, UnitRenderInfo>();
+
+            _renderRequests = _world.Value.GetPool<UnitRenderRequest>();
+            _unitComponents = _world.Value.GetPool<UnitComponent>();
+            _renderComponents = _world.Value.GetPool<UnitRenderComponent>();
+            
+            _renderRequestsFilter = _world.Value.Filter<UnitRenderRequest>().End();
+            _renderComponentsFilter = _world.Value.Filter<UnitComponent>().Exc<UnitRenderComponent>().End();
+
+            foreach (var type in _dataList.Value.GetTypes())
+            {
+                var data = _dataList.Value.GetDataByType(type);
+                var entity = _world.Value.NewEntity();
+                ref var renderRequest = ref _renderRequests.Add(entity);
+                renderRequest.Mesh = data.Mesh;
+                renderRequest.Material = data.Material;
+                renderRequest.Type = type;
+                _unitRenderInfo.Add(type, new UnitRenderInfo());
+            }
+        }
+
+        public void Run(IEcsSystems systems)
+        {
+            foreach (var key in _unitRenderInfo.Keys)
+            {
+                _unitRenderInfo[key].Positions.Clear();
+                _unitRenderInfo[key].Count = 0;
+            }
+            
+            foreach (var entity in _renderComponentsFilter)
+            {
+                ref var unitComponent = ref _unitComponents.Get(entity);
+                ref var renderComponent = ref _renderComponents.Get(entity);
+                _unitRenderInfo[renderComponent.Type].Positions.Add(unitComponent.Unit.transform.position);
+                _unitRenderInfo[renderComponent.Type].Count += 1;
+            }
+            
+            foreach (var entity in _renderRequestsFilter)
+            {
+                ref var renderRequest = ref _renderRequests.Get(entity);
+                renderRequest.InstanceCount = _unitRenderInfo[renderRequest.Type].Count;
+                renderRequest.Positions = _unitRenderInfo[renderRequest.Type].Positions.ToArray();
+            }
+        }
+    }
+
+     public class UnitRenderInfo
+     {
+         public List<Vector4> Positions;
+         public int Count;
+     }
+
+    public struct UnitRenderRequest
+    {
+        public Mesh Mesh;
+        public Material Material;
+        public Vector4[] Positions;
+        public int InstanceCount;
+        public int CashedInstanceCount;
+        public int SubMeshIndex;
+        public int CachedSubMeshIndex;
+        public UnitType Type;
     }
 
     public struct UnitRenderData
