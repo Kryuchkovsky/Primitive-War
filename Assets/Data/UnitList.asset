@@ -15,13 +15,15 @@ MonoBehaviour:
   _units:
     m_Keys: 0000000001000000
     m_Values:
-    - _prefab: {fileID: 9065948347889339177, guid: 5fa06d8699a07f742a5337c74bc9e8ef,
+    - _prefab: {fileID: 364933467746825759, guid: 0dc267715576f404697fe2e765a2b360,
         type: 3}
       _attackRange: 50
       _spawningTime: 3
       _initialHealthPoints: 100
+      _type: 0
     - _prefab: {fileID: 978919290917726313, guid: 4d82fd343638ed44fa42c2766edbf662,
         type: 3}
       _attackRange: 120
       _spawningTime: 15
       _initialHealthPoints: 500
+      _type: 0

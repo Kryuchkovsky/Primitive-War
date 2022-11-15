@@ -17,11 +17,13 @@ namespace Logic.Units
         
         private void Awake()
         {
-            _defaultPelvisPosition = _pelvisTransform.localPosition;
+            //_defaultPelvisPosition = _pelvisTransform.localPosition;
         }
 
         public void SetRagdollStatus(bool isEnabled)
         {
+            return;
+            
             if (_inRagdollState && !isEnabled)
             {
                 var position = _pelvisTransform.position;

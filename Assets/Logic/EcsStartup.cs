@@ -6,6 +6,7 @@ using Logic.Mechanics.Explosions;
 using Logic.Teams;
 using Logic.Units;
 using Logic.Units.Behaviour;
+using Logic.Units.Render;
 using Logic.Units.Spawn;
 using Logic.Units.Weapon;
 using Logic.Units.Weapon.Bullets;
@@ -19,6 +20,7 @@ namespace Logic
         [SerializeField] private UnitList _unitList;
         [SerializeField] private TeamsConfiguration _teamsConfiguration;
         [SerializeField] private KineticWeaponConfiguration _kineticWeaponConfiguration;
+        [SerializeField] private UnitRenderDataList _unitRenderDataList;
 
         private EcsWorld _world;
         private IEcsSystems _systems;
@@ -39,6 +41,8 @@ namespace Logic
                 .Add(new BulletCreationSystem())
                 .Add(new BulletsDestructionSystem())
                 .Add(new ExplosionCreationSystem())
+                .Add(new UnitRenderRequestCreationSystem())
+                .Add(new UnitRenderingSystem())
 #if UNITY_EDITOR
                 .Add(new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem())
 #endif
@@ -46,6 +50,7 @@ namespace Logic
                 .Inject(_unitList)
                 .Inject(_teamsConfiguration)
                 .Inject(_kineticWeaponConfiguration)
+                .Inject(_unitRenderDataList)
                 .Init();
         }
 

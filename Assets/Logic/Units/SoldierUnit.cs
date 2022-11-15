@@ -15,7 +15,7 @@ namespace Logic.Units
 
         public override void LookInDirection(Vector3 direction)
         {
-            _shoulder.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(_offset);
+            //_shoulder.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(_offset);
         }
     }
 }
