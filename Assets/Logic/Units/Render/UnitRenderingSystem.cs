@@ -32,13 +32,19 @@ namespace Logic.Units.Render
                 {
                     UpdateBuffers(ref renderRequest);
                 }
-
-                Graphics.DrawMeshInstancedIndirect(
+                
+                Graphics.DrawMeshInstanced(
                     renderRequest.Mesh,
                     renderRequest.SubMeshIndex,
                     renderRequest.Material,
-                    new Bounds(Vector3.zero, new Vector3(100, 100, 100)),
-                    renderRequest.ArgsBuffer);
+                    renderRequest.Matrices);
+                
+                // Graphics.DrawMeshInstancedIndirect(
+                //     renderRequest.Mesh,
+                //     renderRequest.SubMeshIndex,
+                //     renderRequest.Material,
+                //     new Bounds(Vector3.zero, new Vector3(100, 100, 100)),
+                //     renderRequest.ArgsBuffer);
             }
         }
 
@@ -123,6 +129,7 @@ namespace Logic.Units.Render
                 renderRequest.Type = type;
                 var renderInfo = new UnitRenderInfo();
                 renderInfo.Positions = new List<Vector4>();
+                renderInfo.Matrices = new List<Matrix4x4>();
                 _unitRenderInfo.Add(type, renderInfo);
             }
         }
@@ -132,6 +139,7 @@ namespace Logic.Units.Render
             foreach (var key in _unitRenderInfo.Keys)
             {
                 _unitRenderInfo[key].Positions.Clear();
+                _unitRenderInfo[key].Matrices.Clear();
                 _unitRenderInfo[key].Count = 0;
             }
             
@@ -142,6 +150,7 @@ namespace Logic.Units.Render
                 var unitPosition = unitComponent.Unit.transform.position;
                 var position = new Vector4(unitPosition.x, unitPosition.y, unitPosition.z, 1);
                 _unitRenderInfo[renderComponent.Type].Positions.Add(position);
+                _unitRenderInfo[renderComponent.Type].Matrices.Add(Matrix4x4.TRS(unitPosition, unitComponent.Unit.transform.rotation, unitComponent.Unit.transform.localScale));
                 _unitRenderInfo[renderComponent.Type].Count += 1;
             }
             
@@ -150,6 +159,7 @@ namespace Logic.Units.Render
                 ref var renderRequest = ref _renderRequests.Get(entity);
                 renderRequest.InstanceCount = _unitRenderInfo[renderRequest.Type].Count;
                 renderRequest.Positions = _unitRenderInfo[renderRequest.Type].Positions.ToArray();
+                renderRequest.Matrices = _unitRenderInfo[renderRequest.Type].Matrices;
             }
         }
     }
@@ -157,6 +167,7 @@ namespace Logic.Units.Render
      public class UnitRenderInfo
      {
          public List<Vector4> Positions;
+         public List<Matrix4x4> Matrices;
          public int Count;
      }
     
@@ -166,6 +177,7 @@ namespace Logic.Units.Render
         public Material Material;
         public ComputeBuffer ArgsBuffer;
         public ComputeBuffer PositionBuffer;
+        public List<Matrix4x4> Matrices;
         public Vector4[] Positions;
         public uint[] Args;
         public int InstanceCount;
