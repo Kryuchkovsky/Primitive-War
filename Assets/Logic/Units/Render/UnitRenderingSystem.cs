@@ -130,6 +130,7 @@ namespace Logic.Units.Render
                 var renderInfo = new UnitRenderInfo();
                 renderInfo.Positions = new List<Vector4>();
                 renderInfo.Matrices = new List<Matrix4x4>();
+                renderInfo.RotationOffset = Quaternion.Euler(data.RotationOffset);
                 _unitRenderInfo.Add(type, renderInfo);
             }
         }
@@ -147,11 +148,13 @@ namespace Logic.Units.Render
             {
                 ref var unitComponent = ref _unitComponents.Get(entity);
                 ref var renderComponent = ref _renderComponents.Get(entity);
+                var info = _unitRenderInfo[renderComponent.Type];
                 var unitPosition = unitComponent.Unit.transform.position;
                 var position = new Vector4(unitPosition.x, unitPosition.y, unitPosition.z, 1);
-                _unitRenderInfo[renderComponent.Type].Positions.Add(position);
-                _unitRenderInfo[renderComponent.Type].Matrices.Add(Matrix4x4.TRS(unitPosition, unitComponent.Unit.transform.rotation, unitComponent.Unit.transform.localScale));
-                _unitRenderInfo[renderComponent.Type].Count += 1;
+                var rotation = unitComponent.Unit.transform.rotation * info.RotationOffset;
+                info.Positions.Add(position);
+                info.Matrices.Add(Matrix4x4.TRS(unitPosition, rotation, unitComponent.Unit.transform.localScale));
+                info.Count += 1;
             }
             
             foreach (var entity in _renderRequestsFilter)
@@ -168,6 +171,7 @@ namespace Logic.Units.Render
      {
          public List<Vector4> Positions;
          public List<Matrix4x4> Matrices;
+         public Quaternion RotationOffset;
          public int Count;
      }
     
@@ -193,6 +197,7 @@ namespace Logic.Units.Render
         public Mesh Mesh;
         public Material Material;
         public UnitType Type;
+        public Vector3 RotationOffset;
     }
 
     public struct UnitRenderComponent

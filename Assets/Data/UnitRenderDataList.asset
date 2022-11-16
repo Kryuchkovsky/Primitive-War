@@ -18,3 +18,4 @@ MonoBehaviour:
     - Mesh: {fileID: 4300000, guid: fcb334eb247ae3e488abb081c847cf09, type: 3}
       Material: {fileID: 2100000, guid: 69c0fd068809d2a4cafbb12fd8e38326, type: 2}
       Type: 0
+      RotationOffset: {x: -90, y: 0, z: 0}
