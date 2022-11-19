@@ -29,7 +29,7 @@ namespace Logic.Units.Behaviour
             {
                 ref var damageComponent = ref _damageComponents.Get(entity);
                 
-                if (damageComponent.DamagedEntity.Unpack(_world.Value, out var damagedEntity))
+                if (damageComponent.DamagedEntity.Unpack(_world.Value, out var damagedEntity) && _unitComponents.Has(damagedEntity))
                 {
                     ref var unitComponent = ref _unitComponents.Get(damagedEntity);
                     ref var healthComponent = ref _healthComponents.Get(damagedEntity);
